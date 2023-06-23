@@ -115,7 +115,7 @@ class _LockerDetailsPageState extends State<LockerDetailsPage> {
                             _isLocked = !_isLocked;
                           });
                           // Implement lock/unlock functionality here
-                          String message = _isLocked ? 'LOCK' : 'UNLOCK';
+                          String message = _isLocked ? 'UNLOCK' : 'LOCK';
                           String topic = _isLocked
                               ? 'lockers/${widget.locker.id}/unlock'
                               : 'lockers/${widget.locker.id}/lock';
