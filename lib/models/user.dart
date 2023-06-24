@@ -1,6 +1,6 @@
 // defines the structure and properties of a user object.
 class User {
-  final String id;
+  final int id;
   final String email;
   final String password;
 
@@ -13,7 +13,7 @@ class User {
   // Create a factory method to construct a User object from JSON data
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'],
+      id: json['id'] as int,
       email: json['email'],
       password: json['password'],
     );

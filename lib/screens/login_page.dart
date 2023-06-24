@@ -1,4 +1,3 @@
-// Contains the login form and handles login functionality.
 import 'package:flutter/material.dart';
 import '../utils/app_routes.dart';
 import '../services/api_service.dart';
@@ -12,24 +11,32 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String _email = '';
   String _password = '';
-void _submitForm() async {
-  if (!_formKey.currentState!.validate()) {
-    return;
+
+  void _submitForm() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    _formKey.currentState!.save();
+
+    final apiService = ApiService();
+    final userId = await apiService.loginUser(_email, _password);
+
+    if (userId != null) {
+      print('Login successful');
+      print(
+          'Popping navigator with email: $_email'); // Add this print statement
+      Navigator.of(context).pop<String>(_email);
+    } else {
+      // Show a SnackBar with an error message
+      print('Login failed');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Login failed. Please check your email and password.'),
+          duration: Duration(seconds: 5),
+        ),
+      );
+    }
   }
-  _formKey.currentState!.save();
-
-  final apiService = ApiService();
-  final success = await apiService.loginUser(_email, _password);
-
-  if (success) {
-    Navigator.of(context).pushReplacementNamed(AppRoutes.mainPage);
-  } else {
-    // Show an error message or handle login failure and go to the main page.
-    print('Login failed');
-    Navigator.of(context).pushReplacementNamed(AppRoutes.mainPage);
-  }
-}
-
 
   @override
   Widget build(BuildContext context) {

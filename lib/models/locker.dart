@@ -1,12 +1,11 @@
-// Defines the structure and properties of a locker object.
 class Locker {
-  final String id;
+  final int id;
   final String name;
   final String size;
   final double price;
   final String imageUrl;
   final bool isAvailable;
-  final int userId;
+  final int? userId;
 
   Locker({
     required this.id,
@@ -15,24 +14,29 @@ class Locker {
     required this.price,
     required this.imageUrl,
     required this.isAvailable,
-    required this.userId,
-    
+    this.userId,
   });
 
-  // Create a factory method to construct a Locker object from JSON data
   factory Locker.fromJson(Map<String, dynamic> json) {
-    return Locker(
-      id: json['id'],
-      name: json['name'],
-      size: json['size'],
-      price: json['price'].toDouble(),
-      imageUrl: json['imageUrl'],
-      isAvailable: json['isAvailable'],
-      userId: json['userId'],
-    );
+    try {
+      return Locker(
+        id: int.parse(json['id'].toString()), // Convert the id to an integer
+        name: json['name'],
+        size: json['size'],
+        price: json['price'].toDouble(),
+        imageUrl: json['imageUrl'],
+        isAvailable: json['isAvailable'],
+        userId: json['userId'],
+      );
+    } catch (e) {
+      if (e is TypeError) {
+        print('Error: $e');
+        print('JSON causing the error: $json');
+      }
+      rethrow;
+    }
   }
 
-  // Create a method to convert a Locker object to JSON data
   Map<String, dynamic> toJson() {
     return {
       'id': id,

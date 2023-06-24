@@ -1,5 +1,3 @@
-// main.dart: The main entry point for the app.
-//It sets up the MaterialApp and initializes any global services.
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../screens/splash_screen.dart';
@@ -12,6 +10,7 @@ import '../screens/register_page.dart';
 import '../screens/available_lockers_page.dart';
 import '../screens/locker_details_page.dart';
 import 'models/locker.dart';
+import 'models/user.dart';
 import 'utils/constants.dart';
 
 void main() {
@@ -37,6 +36,8 @@ class SmartLockerApp extends StatelessWidget {
       ),
       initialRoute: '/',
       onGenerateRoute: (settings) {
+        Object? args = settings.arguments;
+
         switch (settings.name) {
           case '/':
             return MaterialPageRoute(builder: (context) => SplashScreen());
@@ -47,12 +48,17 @@ class SmartLockerApp extends StatelessWidget {
           case AppRoutes.registerPage:
             return MaterialPageRoute(builder: (context) => RegisterPage());
           case AppRoutes.availableLockers:
+            final User user = args as User;
             return MaterialPageRoute(
-                builder: (context) => AvailableLockersPage());
+                builder: (context) => AvailableLockersPage(user: user));
           case AppRoutes.lockerDetails:
-            final Locker locker = settings.arguments as Locker;
+            final Map<String, dynamic> lockerAndUser =
+                args as Map<String, dynamic>;
+            final Locker locker = lockerAndUser['locker'] as Locker;
+            final User user = lockerAndUser['user'] as User;
             return MaterialPageRoute(
-              builder: (context) => LockerDetailsPage(locker: locker),
+              builder: (context) =>
+                  LockerDetailsPage(locker: locker, user: user),
             );
           default:
             return MaterialPageRoute(builder: (context) => MainPage());

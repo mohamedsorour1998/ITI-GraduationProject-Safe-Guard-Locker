@@ -1,4 +1,3 @@
-// Contains the registration form and handles registration functionality.
 import 'package:flutter/material.dart';
 import '../utils/app_routes.dart';
 import '../services/api_service.dart';
@@ -13,23 +12,28 @@ class _RegisterPageState extends State<RegisterPage> {
   String _email = '';
   String _password = '';
   String _confirmPassword = '';
-void _submitForm() async {
-  if (!_formKey.currentState!.validate()) {
-    return;
-  }
-  _formKey.currentState!.save();
 
-  final apiService = ApiService();
-  final success = await apiService.registerUser(_email, _password);
+  // Create a TextEditingController for the Password TextFormField
+  final TextEditingController _passwordController = TextEditingController();
 
-  if (success) {
-    Navigator.of(context).pushReplacementNamed(AppRoutes.loginPage);
-  } else {
-    // Show an error message or handle registration failure and go to the main page.
-    print('Registration failed');
-    Navigator.of(context).pushReplacementNamed(AppRoutes.mainPage);
+  void _submitForm() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    _formKey.currentState!.save();
+
+    final apiService = ApiService();
+    final success = await apiService.registerUser(_email, _password);
+
+    if (success) {
+      print('Registration successful');
+      Navigator.of(context).pushReplacementNamed(AppRoutes.loginPage);
+    } else {
+      // Show an error message or handle registration failure and go to the main page.
+      print('Registration failed');
+      Navigator.of(context).pushReplacementNamed(AppRoutes.mainPage);
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +59,8 @@ void _submitForm() async {
               TextFormField(
                 decoration: InputDecoration(labelText: 'Password'),
                 obscureText: true,
+                controller:
+                    _passwordController, // Add the TextEditingController
                 validator: (password) {
                   if (password == null || password.isEmpty) {
                     return 'Please enter your password';
@@ -70,18 +76,20 @@ void _submitForm() async {
                   if (confirmPassword == null || confirmPassword.isEmpty) {
                     return 'Please confirm your password';
                   }
-                  if (confirmPassword != _password) {
+                  // Use _passwordController.text for comparison
+                  if (confirmPassword != _passwordController.text) {
                     return 'Passwords do not match';
                   }
                   return null;
                 },
-                onSaved: (confirmPassword) => _confirmPassword = confirmPassword!,
+                onSaved: (confirmPassword) =>
+                    _confirmPassword = confirmPassword!,
               ),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _submitForm,
                 child: Text('Register'),
-             ),
+              ),
             ],
           ),
         ),
