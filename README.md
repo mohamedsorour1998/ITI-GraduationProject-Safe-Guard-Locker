@@ -96,7 +96,6 @@ The project is organized into the following directories:
 
 - `registerUser()`: Registers a new user with the provided information.
 - `loginUser()`: Authenticates a user using their email and password.
-- `logoutUser()`: Logs out the currently authenticated user.
 - `getLockers()`: Retrieves a list of available lockers.
 - `reserveLocker()`: Reserves a locker for a user.
 - `unreserveLocker()`: Unreserves a locker for a user.
