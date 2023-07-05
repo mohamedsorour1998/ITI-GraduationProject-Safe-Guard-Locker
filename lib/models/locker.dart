@@ -1,32 +1,42 @@
 class Locker {
   final int id;
-  final String name;
   final String size;
   final double price;
   final String imageUrl;
   final bool isAvailable;
-  final int? userId;
+  final String? userId;
+  final String lockerPhysicalStatus;
 
   Locker({
     required this.id,
-    required this.name,
     required this.size,
     required this.price,
     required this.imageUrl,
     required this.isAvailable,
     this.userId,
+    required this.lockerPhysicalStatus,
   });
 
   factory Locker.fromJson(Map<String, dynamic> json) {
     try {
+      String? userId;
+      if (json.containsKey('reservee_id') && json['reservee_id'] != '') {
+        userId = json['reservee_id'].toString();
+      } else
+        if (json.containsKey('app_user_id') && json['app_user_id'] != '') {
+        userId = json['app_user_id'].toString();
+      } else {
+        userId = null;
+      }
+
       return Locker(
-        id: int.parse(json['id'].toString()), // Convert the id to an integer
-        name: json['name'],
-        size: json['size'],
-        price: json['price'].toDouble(),
-        imageUrl: json['imageUrl'],
-        isAvailable: json['isAvailable'],
-        userId: json['userId'],
+        id: int.parse(json['locker_id'].toString()),
+        size: json['locker_size'],
+        price: double.parse(json['Locker_price'].toString()),
+        imageUrl: json['locker_image_url'],
+        isAvailable: json['availability_status'].toString().toLowerCase() == 'true',
+        userId: userId,
+        lockerPhysicalStatus: json['locker_physical_status'],
       );
     } catch (e) {
       if (e is TypeError) {
@@ -39,13 +49,15 @@ class Locker {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'name': name,
-      'size': size,
-      'price': price,
-      'imageUrl': imageUrl,
-      'isAvailable': isAvailable,
-      'userId': userId,
+      'locker_id': id,
+      'locker_size': size,
+      'Locker_price': price,
+      'locker_image_url': imageUrl,
+      'availability_status': isAvailable,
+      'reservee_id': userId,
+      'locker_physical_status': lockerPhysicalStatus,
     };
   }
+  set userId(String? newUserId) => this.userId = newUserId;
+  set isAvailable(bool newIsAvailable) => this.isAvailable = newIsAvailable;
 }

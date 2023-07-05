@@ -32,7 +32,7 @@ class SmartLockerApp extends StatelessWidget {
       title: appName,
       theme: ThemeData(
         primarySwatch: MaterialColor(primaryColorValue, colorSwatch),
-        accentColor: Color(accentColorValue),
+        hintColor: Color(accentColorValue),
       ),
       initialRoute: '/',
       onGenerateRoute: (settings) {

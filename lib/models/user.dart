@@ -1,21 +1,28 @@
-// defines the structure and properties of a user object.
+// user.dart
+
 class User {
-  final int id;
+  final String id;
   final String email;
   final String password;
+  final String? fullName;
+  final String? phoneNumber;
 
   User({
     required this.id,
     required this.email,
     required this.password,
+    required this.fullName,
+    required this.phoneNumber,
   });
 
   // Create a factory method to construct a User object from JSON data
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'] as int,
+      id: json['app_user_id'] as String,
       email: json['email'],
       password: json['password'],
+      fullName: json['name'],
+      phoneNumber: json['phone_number'],
     );
   }
 
@@ -25,6 +32,8 @@ class User {
       'id': id,
       'email': email,
       'password': password,
+      'fullName': fullName,
+      'phoneNumber': phoneNumber,
     };
   }
 }

@@ -24,7 +24,9 @@ class LockerCard extends StatelessWidget {
       child: Card(
         child: Padding(
           padding: EdgeInsets.all(8),
-          child: Column(
+    child: SingleChildScrollView( // Add this SingleChildScrollView
+
+    child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
@@ -66,9 +68,9 @@ class LockerCard extends StatelessWidget {
                     : () async {
                         if (locker.isAvailable) {
                           await apiService.reserveLocker(
-                              locker.id as int, user.id as int);
+                              locker.id , user.id );
                         } else if (isReservedByCurrentUser) {
-                          await apiService.unreserveLocker(locker.id as int);
+                          await apiService.unreserveLocker(locker.id);
                         }
                         onTap();
                       },
@@ -101,6 +103,7 @@ class LockerCard extends StatelessWidget {
               ),
             ],
           ),
+    ),
         ),
       ),
     );

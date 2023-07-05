@@ -62,7 +62,8 @@ class _LockerDetailsPageState extends State<LockerDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.locker.name),
+        title: Text("widget.locker.id"),
+
       ),
       body: Padding(
         padding: EdgeInsets.all(16),

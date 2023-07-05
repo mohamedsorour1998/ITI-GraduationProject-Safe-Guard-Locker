@@ -12,8 +12,9 @@ class _RegisterPageState extends State<RegisterPage> {
   String _email = '';
   String _password = '';
   String _confirmPassword = '';
+  String _fullName = ''; // Added
+  String _phoneNumber = ''; // Added
 
-  // Create a TextEditingController for the Password TextFormField
   final TextEditingController _passwordController = TextEditingController();
 
   void _submitForm() async {
@@ -23,13 +24,12 @@ class _RegisterPageState extends State<RegisterPage> {
     _formKey.currentState!.save();
 
     final apiService = ApiService();
-    final success = await apiService.registerUser(_email, _password);
+    final success = await apiService.registerUser(_email, _password, _fullName, _phoneNumber); // Modified
 
     if (success) {
       print('Registration successful');
       Navigator.of(context).pushReplacementNamed(AppRoutes.loginPage);
     } else {
-      // Show an error message or handle registration failure and go to the main page.
       print('Registration failed');
       Navigator.of(context).pushReplacementNamed(AppRoutes.mainPage);
     }
@@ -59,8 +59,7 @@ class _RegisterPageState extends State<RegisterPage> {
               TextFormField(
                 decoration: InputDecoration(labelText: 'Password'),
                 obscureText: true,
-                controller:
-                    _passwordController, // Add the TextEditingController
+                controller: _passwordController,
                 validator: (password) {
                   if (password == null || password.isEmpty) {
                     return 'Please enter your password';
@@ -76,14 +75,33 @@ class _RegisterPageState extends State<RegisterPage> {
                   if (confirmPassword == null || confirmPassword.isEmpty) {
                     return 'Please confirm your password';
                   }
-                  // Use _passwordController.text for comparison
                   if (confirmPassword != _passwordController.text) {
                     return 'Passwords do not match';
                   }
                   return null;
                 },
-                onSaved: (confirmPassword) =>
-                    _confirmPassword = confirmPassword!,
+                onSaved: (confirmPassword) => _confirmPassword = confirmPassword!,
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Full Name'), // Added
+                validator: (fullName) {
+                  if (fullName == null || fullName.isEmpty) {
+                    return 'Please enter your full name';
+                  }
+                  return null;
+                },
+                onSaved: (fullName) => _fullName = fullName!, // Added
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Phone Number'), // Added
+                keyboardType: TextInputType.phone,
+                validator: (phoneNumber) {
+                  if (phoneNumber == null || phoneNumber.isEmpty) {
+                    return 'Please enter your phone number';
+                  }
+                  return null;
+                },
+                onSaved: (phoneNumber) => _phoneNumber = phoneNumber!, // Added
               ),
               SizedBox(height: 16),
               ElevatedButton(
