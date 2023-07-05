@@ -28,7 +28,7 @@ class MqttService {
     try {
       print('Client connecting...');
       connectionState = MqttCurrentConnectionState.CONNECTING;
-      await client!.connect('mohamedsorour', 'mohamedsorour');
+      await client!.connect('iti2023_projects', 'iti2023_projects');
     } on Exception catch (e) {
       print('Client exception - $e');
       connectionState = MqttCurrentConnectionState.ERROR_WHEN_CONNECTING;
@@ -46,9 +46,9 @@ class MqttService {
   }
 
   void _setupMqttClient() {
-    client = MqttServerClient.withPort('ed899a39c5d048d1923b57ae79773860.s2.eu.hivemq.cloud', 'mohamedsorour', 8883);
-    client!.secure = true;
-    client!.securityContext = SecurityContext.defaultContext;
+    client = MqttServerClient.withPort('beta.masterofthings.com', 'mohamedsorour', 1883);
+    // client!.secure = true;
+    // client!.securityContext = SecurityContext.defaultContext;
     client!.keepAlivePeriod = 20;
     client!.onDisconnected = _onDisconnected;
     client!.onConnected = _onConnected;

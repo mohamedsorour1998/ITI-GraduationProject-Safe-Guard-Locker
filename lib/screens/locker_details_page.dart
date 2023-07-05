@@ -22,10 +22,11 @@ class _LockerDetailsPageState extends State<LockerDetailsPage> {
   void initState() {
     super.initState();
     _mqttService.connect().then((_) {
-      print('MQTT connected!');
 
       if (_mqttService.client != null) {
-        String lockerStatusTopic = 'lockers/${widget.locker.id}/status';
+        // String lockerStatusTopic = 'lockers/${widget.locker.id}/status';
+        String lockerStatusTopic = 'ITI/Intake43/'; // for MoT
+
         _mqttService.subscribe(lockerStatusTopic);
 
         if (_mqttService.client!.updates != null) {
@@ -62,7 +63,7 @@ class _LockerDetailsPageState extends State<LockerDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("widget.locker.id"),
+        title: Text("Locker: ${widget.locker.id.toString()}"),
 
       ),
       body: Padding(
@@ -127,18 +128,33 @@ class _LockerDetailsPageState extends State<LockerDetailsPage> {
                       _isLocked = !_isLocked;
                     });
                     // Implement lock/unlock functionality here
-                    String message = _isLocked ? 'UNLOCK' : 'LOCK';
+                    String message = _isLocked ? 'LOCK' : 'UNLOCK';
                     String topic = _isLocked
-                        ? 'lockers/${widget.locker.id}/unlock'
-                        : 'lockers/${widget.locker.id}/lock';
+                        ?
+                    // 'lockers/${widget.locker.id}/lock'
+                    'ITI/Intake43/lock'
+                        :
+                    // 'lockers/${widget.locker.id}/unlock';
+                    'ITI/Intake43/unlock';
+
 
                     if (_mqttService.client != null) {
-                      _mqttService.client!.publishMessage(
-                          topic,
-                          MqttQos.atLeastOnce,
-                          MqttClientPayloadBuilder()
-                              .addString(message)
-                              .payload!);
+
+                      try {
+                        // _mqttService.client!.publishMessage(
+                        //     topic,
+                        //     MqttQos.atLeastOnce,
+                        //     MqttClientPayloadBuilder()
+                        //         .addString(message)
+                        //         .payload!);
+
+                        _mqttService.publish(topic,message);
+                      }
+                      catch (e){
+                        print("Publishing error: ${e}");
+
+                      }
+
                     } else {
                       print('Error: MQTT client is not initialized');
                     }

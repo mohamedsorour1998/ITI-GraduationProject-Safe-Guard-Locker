@@ -57,7 +57,7 @@ class LockerCard extends StatelessWidget {
                     } else if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
                     } else {
-                      return Text('Reserved by: ${snapshot.data}');
+                      return Text('Reserved!');
                     }
                   },
                 ),
