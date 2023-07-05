@@ -3,7 +3,7 @@ import 'package:mqtt_client/mqtt_client.dart';
 import '../models/locker.dart';
 import '../services/mqtt_service.dart';
 import '../models/user.dart';
-
+import 'dart:convert';
 class LockerDetailsPage extends StatefulWidget {
   final Locker locker;
   final User user;
@@ -22,10 +22,9 @@ class _LockerDetailsPageState extends State<LockerDetailsPage> {
   void initState() {
     super.initState();
     _mqttService.connect().then((_) {
-
       if (_mqttService.client != null) {
-        // String lockerStatusTopic = 'lockers/${widget.locker.id}/status';
-        String lockerStatusTopic = 'ITI/Intake43/'; // for MoT
+        // Include lockerId in the topic
+        String lockerStatusTopic = 'ITI/Intake43/SafeGuardLockers/sensorStatus/' + widget.locker.id.toString();
 
         _mqttService.subscribe(lockerStatusTopic);
 
@@ -33,13 +32,13 @@ class _LockerDetailsPageState extends State<LockerDetailsPage> {
           _mqttService.client!.updates!
               .listen((List<MqttReceivedMessage<MqttMessage>> c) {
             final MqttPublishMessage recMess =
-                c[0].payload as MqttPublishMessage;
+            c[0].payload as MqttPublishMessage;
             final String payload = MqttPublishPayload.bytesToStringAsString(
                 recMess.payload.message!);
             setState(() {
-              if (payload == 'LOCKED') {
+              if (payload == 'locked') {
                 _isLocked = true;
-              } else if (payload == 'UNLOCKED') {
+              } else if (payload == 'unlocked') {
                 _isLocked = false;
               }
             });
@@ -112,49 +111,41 @@ class _LockerDetailsPageState extends State<LockerDetailsPage> {
                 SizedBox(height: 5),
                 Text('\$${widget.locker.price}'),
                 SizedBox(height: 20),
-                // SizedBox(height: 20),
-                // Text(
-                //   'Reserved by:',
-                //   style: TextStyle(fontWeight: FontWeight.bold),
-                // ),
-                // SizedBox(height: 5),
-                // Text(widget.user
-                //     .email), // Show the email of the user who reserved the locker
-                // SizedBox(height: 20),
+
                 ElevatedButton(
                   child: Text(_isLocked ? 'Unlock' : 'Lock'),
                   onPressed: () {
                     setState(() {
                       _isLocked = !_isLocked;
                     });
-                    // Implement lock/unlock functionality here
-                    String message = _isLocked ? 'LOCK' : 'UNLOCK';
-                    String topic = _isLocked
-                        ?
-                    // 'lockers/${widget.locker.id}/lock'
-                    'ITI/Intake43/lock'
-                        :
-                    // 'lockers/${widget.locker.id}/unlock';
-                    'ITI/Intake43/unlock';
 
+                    String command = _isLocked ? 'LOCK' : 'UNLOCK';
+                    String topic = 'PostSensorData';
+
+                    Map<String, dynamic> payload = {
+                      "Auth": {
+                        "DriverManagerId": "1",
+                        "DriverManagerPassword": "123"
+                      },
+                      "Package": {
+                        "SensorInfo": {
+                          "SensorId": "732"
+                        },
+                        "SensorData": {
+                          "myUserId": widget.user.id,
+                          "lockerId": widget.locker.id,
+                          "command": command
+                        }
+                      }
+                    };
+                    String message = jsonEncode(payload);
 
                     if (_mqttService.client != null) {
-
                       try {
-                        // _mqttService.client!.publishMessage(
-                        //     topic,
-                        //     MqttQos.atLeastOnce,
-                        //     MqttClientPayloadBuilder()
-                        //         .addString(message)
-                        //         .payload!);
-
-                        _mqttService.publish(topic,message);
-                      }
-                      catch (e){
+                        _mqttService.publish(topic, message);
+                      } catch (e) {
                         print("Publishing error: ${e}");
-
                       }
-
                     } else {
                       print('Error: MQTT client is not initialized');
                     }
